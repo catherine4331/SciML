@@ -80,3 +80,16 @@ end
 
 fused(A, B, C) = A .+ B .+ C
 @btime fused(A, B, C)
+
+D = similar(A)
+fused_output!(D, A, B, C) = D .=  A .+ B .+ C
+@btime fused_output!(D, A, B, C)
+
+function non_vectorized!(tmp, A, B, C)
+    @inbounds for i in eachindex(tmp)
+        tmp[i] = A[i] * B[i] * C[i]
+    end
+    
+    nothing
+end
+@btime non_vectorized!(D, A, B ,C)
